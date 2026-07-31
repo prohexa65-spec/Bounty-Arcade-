@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0f172a">
+  <title>Bounty Arcade</title>
+  <style>
+    :root{
+      --bg:#0f172a;--panel:#172033cc;--panel2:#202b42;
+      --border:#334155;--text:#f8fafc;--muted:#94a3b8;
+      --red:#ef4444;--red2:#dc2626;--gold:#facc15;
+      --cyan:#22d3ee;--green:#22c55e;--purple:#a855f7;
+      font-family:Inter,ui-sans-serif,system-ui,sans-serif
+    }
+    *{box-sizing:border-box}
+    body{margin:0;min-height:100vh;color:var(--text);background:
+      radial-gradient(circle at 10% 0%,#ef444433,transparent 28rem),
+      radial-gradient(circle at 100% 20%,#22d3ee1c,transparent 26rem),var(--bg)}
+    button,input,textarea,select{font:inherit}
+    button{cursor:pointer}
+    .hidden{display:none!important}.muted{color:var(--muted)}.small{font-size:.82rem}
+    .container{width:min(1280px,calc(100% - 28px));margin:auto}
+    .glass{background:var(--panel);border:1px solid #ffffff18;backdrop-filter:blur(12px);
+      box-shadow:0 20px 60px #0005;border-radius:20px}
+    .topbar{position:sticky;top:0;z-index:20;background:#0f172ae8;border-bottom:1px solid var(--border);backdrop-filter:blur(18px)}
+    .header{min-height:76px;display:flex;align-items:center;gap:18px;justify-content:space-between}
+    .brand{font-size:1.2rem;font-weight:900;white-space:nowrap}.brand b{color:var(--red)}
+    .account{display:flex;align-items:center;gap:8px}
+    .avatar{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;background:#334155;
+      border:3px solid var(--glow,#fff);box-shadow:0 0 15px var(--glow,#fff);font-size:1.2rem}
+    .account-info{min-width:100px}.level{font-size:.72rem;color:var(--gold)}
+    .xp{height:5px;background:#334155;border-radius:99px;overflow:hidden}.xp i{display:block;height:100%;background:linear-gradient(90deg,var(--red),var(--gold))}
+    .wallet{display:flex;gap:6px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
+    .currency{padding:8px 10px;border:1px solid var(--border);border-radius:999px;background:#172033;color:var(--gold);white-space:nowrap}
+    .currency.ruby{color:#f472b6}.plus{border:0;background:var(--red);color:white;border-radius:50%;width:25px;height:25px}
+    nav{display:flex;gap:6px;overflow:auto;padding:10px 0}
+    nav button,.ghost{border:0;color:var(--muted);background:transparent;padding:10px 12px;border-radius:10px;white-space:nowrap}
+    nav button.active,nav button:hover,.ghost:hover{background:var(--panel2);color:#fff}
+    main{padding:28px 0 80px}.view{animation:fade .25s ease}@keyframes fade{from{opacity:0;transform:translateY(5px)}to{opacity:1}}
+    .hero{padding:34px;min-height:300px;display:flex;align-items:center;justify-content:space-between;gap:22px;
+      background:linear-gradient(110deg,#291326dd,#172033bb),url("https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=1500&q=80") center/cover}
+    h1{font-size:clamp(2.3rem,6vw,5rem);line-height:.95;margin:10px 0;letter-spacing:-.06em}
+    h2,h3{margin-top:0}.gradient{background:linear-gradient(90deg,#fff,var(--red),var(--gold));color:transparent;background-clip:text}
+    .btn{border:0;border-radius:11px;padding:11px 16px;font-weight:800;color:#fff;background:linear-gradient(135deg,var(--red),var(--red2));box-shadow:0 8px 24px #ef444455}
+    .btn:hover{filter:brightness(1.15)}.btn.secondary{background:var(--panel2);box-shadow:none;border:1px solid var(--border)}
+    .btn.danger{background:#991b1b}.btn:disabled{opacity:.45;cursor:not-allowed}
+    .section{margin-top:25px}.section-title{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:15px}
+    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px}
+    .card{overflow:hidden}.card-body{padding:17px}.cover{height:145px;display:grid;place-items:center;font-size:4rem;
+      background:linear-gradient(135deg,#3f172b,#172554);overflow:hidden}.cover img{width:100%;height:100%;object-fit:cover}
+    .tags{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0}.tag{font-size:.72rem;padding:5px 8px;border-radius:99px;color:#fecaca;background:#ef444422;border:1px solid #ef444455}
+    .tag.gold{color:var(--gold);background:#facc1522;border-color:#facc1555}
+    .actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+    .quick{display:grid;grid-template-columns:repeat(3,1fr);gap:15px;margin-top:18px}.quick .glass{padding:20px}
+    .bounty-prize{margin-top:18px;padding:24px;background:linear-gradient(100deg,#451a03,#7f1d1d);display:flex;justify-content:space-between;align-items:center}
+    .panel{padding:20px;margin-bottom:18px}.form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px}
+    label{display:grid;gap:7px;color:var(--muted);font-size:.88rem}input,textarea,select{width:100%;padding:11px 12px;color:var(--text);background:#0b1220;border:1px solid var(--border);border-radius:10px;outline:0}
+    input:focus,textarea:focus,select:focus{border-color:var(--red)}textarea{min-height:105px;resize:vertical}.code{min-height:260px;font:13px/1.5 monospace}
+    .profile-cover{padding:25px;background:linear-gradient(120deg,#7f1d1d,#172554);position:relative}.profile-main{display:flex;gap:18px;align-items:center}
+    .profile-main .avatar{width:86px;height:86px;font-size:2rem}.stat-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:18px}
+    .stat{padding:13px;background:#0b122088;border:1px solid var(--border);border-radius:12px}.stat b{display:block;font-size:1.3rem}
+    .shop-item{padding:18px}.price{color:var(--gold);font-weight:800}.owned{color:var(--green);font-weight:800}
+    table{width:100%;border-collapse:collapse;min-width:650px}th,td{text-align:left;padding:11px;border-bottom:1px solid var(--border)}th{color:var(--muted);font-size:.8rem}
+    .table-wrap{overflow:auto}.toast{position:fixed;right:18px;bottom:18px;z-index:50;padding:14px 16px;border-radius:12px;background:#1e293b;border:1px solid var(--border);box-shadow:0 15px 35px #0008}
+    dialog{width:100vw;height:100vh;max-width:none;max-height:none;padding:0;border:0;background:#020617;color:var(--text)}
+    dialog::backdrop{background:#020617}.game-head{position:absolute;z-index:2;top:15px;left:15px;right:15px;padding:10px 14px;border-radius:12px;background:#0f172acc;backdrop-filter:blur(12px);display:flex;justify-content:space-between;align-items:center}
+    iframe.game{width:100%;height:100%;border:0;background:#fff}
+    @media(max-width:760px){
+      .header{flex-wrap:wrap;padding:10px 0}.wallet{margin-left:auto}.account-info{display:none}
+      nav{order:3;width:100%;position:fixed;bottom:0;left:0;right:0;background:#0f172af2;justify-content:space-around;border-top:1px solid var(--border);z-index:30}
+      nav button{font-size:.7rem;padding:9px 6px}.hero{padding:24px;min-height:390px}.quick{grid-template-columns:1fr}.bounty-prize{display:block}.stat-row{grid-template-columns:repeat(2,1fr)}
+    }
+  </style>
+</head>
+<body>
+<header class="topbar">
+  <div class="container header">
+    <div class="brand">🎮 <b>Bounty</b> Arcade</div>
+    <div id="account"></div>
+    <div class="wallet">
+      <span class="currency">🪙 <b id="coins">0</b></span><button class="plus" onclick="toast('Coin purchases can be connected to Stripe or AdMob.')">+</button>
+      <span class="currency ruby">💎 <b id="rubies">0</b></span><button class="plus" onclick="toast('Ruby purchases can be connected to Stripe.')">+</button>
+      <button class="ghost" onclick="toast('No new notifications.')">🔔</button>
+    </div>
+  </div>
+  <div class="container"><nav>
+    <button class="active" data-view="home">🏠 Home</button>
+    <button data-view="games">🎯 Games</button>
+    <button data-view="shop">🛒 Shop</button>
+    <button data-view="creator">🛠 Creator Studio</button>
+    <button data-view="profile">👤 Profile</button>
+    <button data-view="admin" class="admin-only hidden">🛡 Admin</button>
+  </nav></div>
+</header>
+
+<main class="container">
+  <section id="home" class="view">
+    <div class="hero glass">
+      <div><p class="small">PLAY • CREATE • EARN</p><h1>Every game has a <span class="gradient">bounty.</span></h1>
+        <p class="muted">Discover HTML games, complete challenges, and build your arcade legacy.</p>
+        <button class="btn" onclick="showView('games')">PLAY NOW 🎮 ›</button>
+      </div><div class="small">🔥 Weekly creator spotlight</div>
+    </div>
+    <div class="quick">
+      <div class="glass"><h3>🎯 Bounty Area</h3><p class="muted">Complete challenges and earn coins.</p><button class="btn secondary" onclick="showView('games')">View bounties</button></div>
+      <div class="glass"><h3>🎁 Exclusive Offer</h3><p class="muted">Claim your daily streak reward.</p><button class="btn secondary" onclick="claimDaily()">Claim reward</button></div>
+      <div class="glass"><h3>🚩 Report</h3><p class="muted">Help keep the arcade safe.</p><button class="btn secondary" onclick="toast('Report tools are available to signed-in players.')">Report issue</button></div>
+    </div>
+    <div class="bounty-prize glass"><div><p class="small">WEEKLY BOUNTY PRIZE</p><h2>Earn up to 3,000 🪙</h2></div><button class="btn" onclick="showView('games')">VIEW PRIZES ›</button></div>
+    <div class="section"><div class="section-title"><h2>Featured games</h2><span class="muted small">Fresh from creators</span></div><div id="featured" class="grid"></div></div>
+  </section>
+
+  <section id="games" class="view hidden">
+    <div class="section-title"><h2>Games & Bounties</h2><button class="btn" onclick="showView('creator')">Create game</button></div>
+    <div id="gamesGrid" class="grid"></div><div class="section"><h2>Active bounties</h2><div id="bountiesGrid" class="grid"></div></div>
+  </section>
+
+  <section id="shop" class="view hidden">
+    <div class="section-title"><h2>Shop & Customization</h2><span class="muted">Personalize your profile</span></div>
+    <div class="panel glass"><h3>Profile Banners</h3><div id="banners" class="grid"></div></div>
+    <div class="panel glass"><h3>Avatar Glows</h3><div id="glows" class="grid"></div></div>
+    <div class="panel glass"><h3>Badges</h3><div id="badges" class="grid"></div></div>
+  </section>
+
+  <section id="creator" class="view hidden">
+    <div class="section-title"><h2>Creator Studio</h2><span class="muted">Publish your next challenge</span></div>
+    <div class="panel glass"><form id="gameForm"><div class="form-grid">
+      <label>Title<input name="title" required placeholder="Mosquito Squeeze"></label>
+      <label>Thumbnail URL<input name="thumbnail" placeholder="https://..."></label>
+    </div><label>Description<textarea name="description"></textarea></label>
+    <label>HTML / JavaScript Game Code<textarea class="code" name="html" required placeholder="<!doctype html>..."></textarea></label>
+    <button class="btn">Publish game</button></form></div>
+    <div class="panel glass"><h3>Create bounty</h3><form id="bountyForm"><div class="form-grid">
+      <label>Game<select name="gameId" id="bountyGame"></select></label>
+      <label>Difficulty<select name="difficulty"><option>Easy</option><option>Medium</option><option>Hard</option><option>Extreme</option><option>Weekly</option></select></label>
+      <label>Title<input name="title" required></label></div><label>Rules<textarea name="rules" required></textarea></label>
+      <button class="btn">Publish bounty</button></form></div>
+  </section>
+
+  <section id="profile" class="view hidden"><div class="panel glass profile-cover">
+    <div class="profile-main"><div id="profileAvatar" class="avatar">👾</div><div><h2 id="profileName">Guest Player</h2><span class="tag">Arcade Player</span><p id="profileBio" class="muted">Sign in to build your profile.</p></div></div>
+    <div class="actions"><button class="btn" onclick="toast('Profile editing can be enabled with an updateDoc form.')">✎ Edit profile</button><button class="btn secondary" onclick="navigator.clipboard?.writeText(location.href);toast('Profile link copied.')">Share profile</button></div>
+    <div class="stat-row"><div class="stat"><span class="muted">Games Played</span><b id="gamesPlayed">0</b></div><div class="stat"><span class="muted">Bounty Points</span><b id="bountyPoints">0</b></div><div class="stat"><span class="muted">Followers</span><b id="followers">0</b></div><div class="stat"><span class="muted">Following</span><b id="following">0</b></div></div>
+  </div></section>
+
+  <section id="admin" class="view hidden">
+    <div class="section-title"><h2>Secret Admin Panel</h2><span class="tag gold">OWNER CONTROL</span></div>
+    <div class="panel glass"><h3>Currency Manager</h3><form id="currencyForm" class="form-grid">
+      <label>User email<input name="email" type="email" required></label><label>Currency<select name="currency"><option>coins</option><option>rubies</option></select></label>
+      <label>Amount<input name="amount" type="number" min="0" required></label><label>Action<select name="action"><option value="add">Add</option><option value="remove">Remove</option></select></label>
+      <button class="btn">Apply transaction</button></form></div>
+    <div class="panel glass"><h3>Content Moderation</h3><div class="table-wrap"><table><tbody id="moderation"></tbody></table></div></div>
+  </section>
+</main>
+
+<div id="toast" class="toast hidden"></div>
+<dialog id="login"><div class="panel glass" style="margin:8vh auto;max-width:420px"><h2>Enter the Arcade</h2>
+  <button class="btn" style="width:100%" id="google">Continue with Google</button><hr>
+  <form id="loginForm"><label>Email<input name="email" type="email" required></label><label>Password<input name="password" type="password" minlength="6" required></label><label>Username<input name="username"></label><div class="actions"><button class="btn">Sign in / Register</button><button type="button" class="btn secondary" onclick="login.close()">Close</button></div></form>
+</div></dialog>
+
+<script type="module">
+import{initializeApp}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import{getAuth,GoogleAuthProvider,signInWithPopup,signInWithEmailAndPassword,createUserWithEmailAndPassword,onAuthStateChanged,signOut}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import{getFirestore,collection,doc,getDoc,setDoc,addDoc,updateDoc,onSnapshot,serverTimestamp,runTransaction,increment}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const config={
+  apiKey:"AIzaSyCI-xIQfoEQdx2KEZbo37C5UsO24KGPGbs",authDomain:"bounty-arcade.firebaseapp.com",
+  projectId:"bounty-arcade",storageBucket:"bounty-arcade.firebasestorage.app",
+  messagingSenderId:"267185636500",appId:"1:267185636500:web:92ddf46af2865bf0b22081"
+};
+const app=initializeApp(config),auth=getAuth(app),db=getFirestore(app);
+const ADMIN="prohexa65@gmail.com",q=s=>document.querySelector(s),state={user:null,profile:null,games:[],bounties:[]};
+const esc=v=>String(v??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const toast=m=>{q("#toast").textContent=m;q("#toast").classList.remove("hidden");clearTimeout(window.tt);window.tt=setTimeout(()=>q("#toast").classList.add("hidden"),3500)};
+window.toast=toast;
+const money=n=>Number(n||0).toLocaleString();
+const admin=()=>state.user?.email?.toLowerCase()===ADMIN;
+const signed=()=>{if(!state.user){login.showModal();return false}return true};
+
+window.showView=v=>{if(v==="admin"&&!admin())return toast("Admin access restricted.");document.querySelectorAll(".view").forEach(x=>x.classList.toggle("hidden",x.id!==v));document.querySelectorAll("nav button").forEach(x=>x.classList.toggle("active",x.dataset.view===v))};
+document.querySelectorAll("nav button").forEach(b=>b.onclick=()=>showView(b.dataset.view));
+
+async function ensureUser(user,username=""){
+  const ref=doc(db,"users",user.uid),snap=await getDoc(ref);
+  const defaults={username:username||user.displayName||user.email.split("@")[0],email:user.email,level:1,xp:0,maxXp:1000,coins:0,rubies:0,bountyPoints:0,gamesPlayed:0,creatorEarnings:{coins:0,rubies:0},followers:0,following:0,inventory:{banners:["white"],glows:["white"],badges:[]},equipped:{banner:"white",glow:"white",badge:""},isVerified:false,isAdmin:false,dailyStreak:0,lastDailyClaim:null};
+  await setDoc(ref,snap.exists()?{email:user.email}:{...defaults,email:user.email},{merge:true});
+  state.profile=(await getDoc(ref)).data();
+}
+function renderAccount(){
+  const p=state.profile||{},glow=p.equipped?.glow||"white";
+  q("#coins").textContent=money(p.coins);q("#rubies").textContent=money(p.rubies);
+  q("#account").innerHTML=state.user?`<div class="account"><div class="avatar" style="--glow:${glowColor(glow)}">👾</div><div class="account-info"><b>${esc(p.username||"Player")}</b><div class="level">Lv. ${p.level||1}</div><div class="xp"><i style="width:${Math.min(100,(p.xp||0)/(p.maxXp||1000)*100)}%"></i></div></div><button class="ghost" id="logout">↪</button></div>`:`<button class="btn" onclick="login.showModal()">Sign in</button>`;
+  q("#logout")?.addEventListener("click",()=>signOut(auth));
+  document.querySelectorAll(".admin-only").forEach(x=>x.classList.toggle("hidden",!admin()));
+  q("#profileName").textContent=p.username||"Guest Player";q("#gamesPlayed").textContent=p.gamesPlayed||0;q("#bountyPoints").textContent=p.bountyPoints||0;q("#followers").textContent=p.followers||0;q("#following").textContent=p.following||0;
+  q("#profileAvatar").style.setProperty("--glow",glowColor(glow));
+}
+function glowColor(g){return{white:"#fff",red:"#ff0055",blue:"#00d2ff",green:"#00ff87",purple:"#b000ff",gold:"#ffcc00",rainbow:"#ef4444"}[g]||"#fff"}
+function gameCard(g){return`<article class="card glass"><div class="cover">${g.thumbnail?`<img src="${esc(g.thumbnail)}" alt="">`:"🎮"}</div><div class="card-body"><h3>${esc(g.title)}</h3><p class="muted small">${esc(g.description||"Arcade challenge")}</p><div class="tags"><span class="tag">${esc(g.creatorName||"Creator")}</span>${g.verified?'<span class="tag">✅ Verified</span>':""}</div><button class="btn" onclick="play('${g.id}')">Play game</button></div></article>`}
+function render(){
+  renderAccount();q("#featured").innerHTML=state.games.slice(0,3).map(gameCard).join("")||"<p class='muted'>No games published yet.</p>";q("#gamesGrid").innerHTML=state.games.map(gameCard).join("")||"<p class='muted'>No games published yet.</p>";
+  q("#bountyGame").innerHTML=state.games.map(g=>`<option value="${g.id}">${esc(g.title)}</option>`).join("")||"<option>No games</option>";
+  q("#bountiesGrid").innerHTML=state.bounties.filter(b=>b.active).map(b=>`<article class="card glass card-body"><span class="tag gold">${b.difficulty} · ${b.reward} 🪙</span><h3>${esc(b.title)}</h3><p>${esc(b.rules)}</p><button class="btn" onclick="claim('${b.id}')">Claim bounty</button></article>`).join("")||"<p class='muted'>No active bounties.</p>";
+  q("#moderation").innerHTML=admin()?state.games.map(g=>`<tr><td>${esc(g.title)}</td><td>${esc(g.creatorName)}</td><td><button class="btn secondary" onclick="moderate('${g.id}','verified')">Verify</button><button class="btn danger" onclick="moderate('${g.id}','deleted')">Delete</button></td></tr>`).join(""):"";
+  renderShop();
+}
+const shop={
+  banners:[["white","⬜ White",0,"coins"],["black","⬛ Black",250,"coins"],["red","🟥 Red",500,"coins"],["blue","🟦 Blue",700,"coins"],["green","🟩 Green",700,"coins"],["gold","🟨 Gold",900,"coins"],["purple","🟪 Purple",1200,"coins"],["neon","⭕ Neon",5,"rubies"]],
+  glows:[["white","⬜ White",0,"coins"],["red","🟥 Red",600,"coins"],["blue","🟦 Blue",700,"coins"],["green","🟩 Green",700,"coins"],["purple","🟪 Purple",1000,"coins"],["gold","🟨 Gold",1500,"coins"],["rainbow","🌈 Rainbow",15,"rubies"]],
+  badges:[["small_badge","🔹 Small Badge",500,"coins"],["big_badge","🔷 Big Badge",1500,"coins"],["rich_badge","💲 Rich Badge",0,"coins"],["verified","✅ Verified Badge",50,"rubies"]]
+};
+function renderShop(){
+  ["banners","glows","badges"].forEach(type=>q("#"+type).innerHTML=shop[type].map(([id,name,cost,currency])=>{const owned=state.profile?.inventory?.[type]?.includes(id)||id==="white"&&type!=="badges"||id==="rich_badge"&&(state.profile?.coins||0)>=100000;return`<div class="shop-item glass"><h3>${name}</h3><p class="price">${cost?`${cost} ${currency==="coins"?"🪙":"💎"}`:"Free"}</p>${owned?'<span class="owned">Owned ✓</span>':`<button class="btn" onclick="buy('${type}','${id}',${cost},'${currency}')">Buy</button>`}</div>`}).join(""));
+}
+window.buy=async(type,id,cost,currency)=>{
+  if(!signed())return;try{const ref=doc(db,"users",state.user.uid);
+    // Shop purchase transaction prevents duplicate purchases and negative balances.
+    await runTransaction(db,async tx=>{const s=await tx.get(ref),p=s.data(),owned=p.inventory?.[type]||[];if(owned.includes(id))throw Error("Already owned");if(Number(p[currency]||0)<cost)throw Error("Insufficient balance");tx.update(ref,{[currency]:increment(-cost),[`inventory.${type}`]:[...owned,id]})});
+    toast("Item purchased.");await ensureUser(state.user);
+  }catch(e){toast(e.message)}
+};
+window.claimDaily=async()=>{
+  if(!signed())return;try{const ref=doc(db,"users",state.user.uid);
+    // Daily reward transaction prevents duplicate claims on the same UTC date.
+    await runTransaction(db,async tx=>{const s=await tx.get(ref),p=s.data(),today=new Date().toISOString().slice(0,10);if(p.lastDailyClaim===today)throw Error("Daily reward already claimed");const day=(p.dailyStreak||0)%7+1,reward=day===7?{rubies:increment(1)}:{coins:increment([0,100,200,300,500,700,1000][day])};tx.update(ref,{...reward,dailyStreak:day,lastDailyClaim:today})});
+    toast("Daily reward claimed!");await ensureUser(state.user)
+  }catch(e){toast(e.message)}
+};
+q("#google").onclick=async()=>{try{await signInWithPopup(auth,new GoogleAuthProvider());login.close()}catch(e){toast(e.message)}};
+q("#loginForm").onsubmit=async e=>{e.preventDefault();const f=new FormData(e.target);try{let r;try{r=await signInWithEmailAndPassword(auth,f.get("email"),f.get("password"))}catch(x){r=await createUserWithEmailAndPassword(auth,f.get("email"),f.get("password"))}await ensureUser(r.user,f.get("username"));login.close()}catch(x){toast(x.message)}};
+q("#gameForm").onsubmit=async e=>{e.preventDefault();if(!signed())return;const f=new FormData(e.target);await addDoc(collection(db,"games"),{title:f.get("title"),description:f.get("description"),html:f.get("html"),thumbnail:f.get("thumbnail"),creatorId:state.user.uid,creatorName:state.profile.username,verified:false,deleted:false,createdAt:serverTimestamp()});e.target.reset();toast("Game published.")};
+q("#bountyForm").onsubmit=async e=>{e.preventDefault();if(!signed())return;const f=new FormData(e.target),reward={Easy:100,Medium:300,Hard:800,Extreme:1500,Weekly:3000}[f.get("difficulty")];await addDoc(collection(db,"bounties"),{gameId:f.get("gameId"),title:f.get("title"),rules:f.get("rules"),difficulty:f.get("difficulty"),reward,creatorId:state.user.uid,active:true});toast("Bounty published.")};
+window.claim=async id=>{if(!signed())return;const b=state.bounties.find(x=>x.id===id);try{const ref=doc(db,"users",state.user.uid);
+  // Bounty transaction awards a claim only after verifying the bounty is still active.
+  await runTransaction(db,async tx=>{const bs=await tx.get(doc(db,"bounties",id)),us=await tx.get(ref);if(!bs.data()?.active)throw Error("Bounty already claimed");tx.update(ref,{coins:increment(b.reward),bountyPoints:increment(b.reward)});tx.update(doc(db,"bounties",id),{active:false,claimedBy:state.user.uid,claimedAt:serverTimestamp()})});toast("Bounty claimed.")
+}catch(e){toast(e.message)}};
+window.play=id=>{const g=state.games.find(x=>x.id===id),d=document.createElement("dialog"),frame=document.createElement("iframe");if(!g)return;frame.className="game";frame.sandbox="allow-scripts allow-same-origin allow-forms allow-popups";frame.srcdoc=g.html||"";d.innerHTML=`<div class="game-head"><b>${esc(g.title)}</b><div><button class="btn secondary" id="full">⛶ Fullscreen</button><button class="ghost" id="close">✕</button></div></div>`;d.append(frame);document.body.append(d);d.querySelector("#close").onclick=()=>d.close();d.querySelector("#full").onclick=()=>frame.requestFullscreen();d.onclose=()=>d.remove();d.showModal();
+  // The iframe reference is used to validate postMessage responses.
+  frame.addEventListener("load",()=>frame.contentWindow.postMessage({type:"ARCADE_READY"},"*"));
+};
+window.moderate=async(id,action)=>{if(!admin())return;await updateDoc(doc(db,"games",id),{[action]:action==="deleted"});toast("Moderation updated.")};
+
+// Iframe message bridge. Firestore transactions enforce balance safety server-side with rules.
+window.addEventListener("message",async e=>{
+  const frame=[...document.querySelectorAll("iframe.game")].find(x=>x.contentWindow===e.source),m=e.data||{};if(!frame||!state.user)return;
+  try{if(m.type==="GET_USER_BALANCE")frame.contentWindow.postMessage({type:"USER_BALANCE",coins:state.profile.coins,rubies:state.profile.rubies},"*");
+    if(m.type==="EARN_COINS"){const amount=Math.min(100,Math.max(0,Number(m.amount)||0));await updateDoc(doc(db,"users",state.user.uid),{coins:increment(amount)});frame.contentWindow.postMessage({type:"EARNED",amount},"*")}
+    if(m.type==="SPEND_COINS"){const amount=Math.min(10000,Math.max(1,Number(m.amount)||0)),creator=m.creatorId;if(!creator)throw Error("creatorId required");
+      // Creator split transaction: player loses coins; creator receives coins and one ruby.
+      await runTransaction(db,async tx=>{const player=doc(db,"users",state.user.uid),owner=doc(db,"users",creator),ps=await tx.get(player);if((ps.data().coins||0)<amount)throw Error("Insufficient coins");tx.update(player,{coins:increment(-amount)});tx.update(owner,{"creatorEarnings.coins":increment(amount),"creatorEarnings.rubies":increment(1)})});
+      frame.contentWindow.postMessage({type:"SPENT",amount},"*");
+    }
+  }catch(x){frame.contentWindow.postMessage({type:"ERROR",message:x.message},"*")}
+});
+q("#currencyForm").onsubmit=async e=>{e.preventDefault();if(!admin())return;const f=new FormData(e.target),amount=Number(f.get("amount"))*(f.get("action")==="remove"?-1:1);const users=await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js");const snap=await users.getDocs(collection(db,"users"));const found=snap.docs.find(x=>x.data().email===f.get("email"));if(!found)return toast("User not found");await updateDoc(doc(db,"users",found.id),{[f.get("currency")]:increment(amount)});toast("Currency updated.")};
+
+onAuthStateChanged(auth,async u=>{state.user=u;if(u){await ensureUser(u)}render()});
+onSnapshot(collection(db,"games"),s=>{state.games=s.docs.map(x=>({id:x.id,...x.data()})).filter(x=>!x.deleted);render()});
+onSnapshot(collection(db,"bounties"),s=>{state.bounties=s.docs.map(x=>({id:x.id,...x.data()}));render()});
+</script>
+</body>
+</html>
